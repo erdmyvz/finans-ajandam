@@ -1,192 +1,266 @@
-// Şablon Veriler (İlk açılışta tablonun boş kalmaması için ekran görüntülerindeki verileri yüklüyoruz)
-const defaultIncome = 63300;
+// UYGULAMA VERİ TABANI (LocalStorage)
+const db = {
+    expenses: JSON.parse(localStorage.getItem('fa_expenses')) || [],
+    salaries: JSON.parse(localStorage.getItem('fa_salaries')) || generateDefaultSalaries(),
+    status: JSON.parse(localStorage.getItem('fa_status')) || [],
+    investments: JSON.parse(localStorage.getItem('fa_investments')) || [],
+    settings: JSON.parse(localStorage.getItem('fa_settings')) || { salaryHidden: false, statusHidden: true }
+};
 
-const defaultFixedExpenses = [
-    { id: 'f1', name: 'BES', detail: "Ayın 4'ünde", amount: 1000, paid: false },
-    { id: 'f2', name: 'Ulaşım (Kocaeli)', detail: '45 x 25 sefer', amount: 1125, paid: false },
-    { id: 'f3', name: 'Ulaşım (İstanbul)', detail: '180 x 25 sefer', amount: 4500, paid: false },
-    { id: 'f4', name: 'Telefon Üyeliği', detail: "Ayın 4'ünde", amount: 600, paid: false },
-    { id: 'f5', name: 'Adobe Üyeliği', detail: "Ayın 11'inde", amount: 600, paid: false },
-    { id: 'f6', name: 'Youtube Premium', detail: 'Ayın 17-18\'inde', amount: 100, paid: false },
-    { id: 'f7', name: 'iCloud Saklama', detail: "Ayın 27'sinde", amount: 400, paid: false },
-    { id: 'f8', name: 'Harçlık / Diğer', detail: 'Serbest Limit', amount: 1675, paid: false }
-];
-
-const defaultLoans = [
-    { id: 'l1', name: '1. Taksit', date: '22.07.2026', amount: 28895, paid: true }, // Örnek olarak ilkini ödendi başlatalım
-    { id: 'l2', name: '2. Taksit', date: '22.08.2026', amount: 28895, paid: false },
-    { id: 'l3', name: '3. Taksit', date: '22.09.2026', amount: 28895, paid: false },
-    { id: 'l4', name: '4. Taksit', date: '22.10.2026', amount: 28895, paid: false },
-    { id: 'l5', name: '5. Taksit', date: '22.11.2026', amount: 28895, paid: false },
-    { id: 'l6', name: '6. Taksit', date: '22.12.2026', amount: 28895, paid: false },
-    { id: 'l7', name: '7. Taksit', date: '22.01.2027', amount: 28895, paid: false },
-    { id: 'l8', name: '8. Taksit', date: '22.02.2027', amount: 28895, paid: false },
-    { id: 'l9', name: '9. Taksit', date: '22.03.2027', amount: 28895, paid: false },
-    { id: 'l10', name: '10. Taksit', date: '22.04.2027', amount: 28895, paid: false },
-    { id: 'l11', name: '11. Taksit', date: '22.05.2027', amount: 28895, paid: false },
-    { id: 'l12', name: '12. Taksit', date: '22.06.2027', amount: 28895, paid: false }
-];
-
-// Başlangıç Kurulumları
-if (!localStorage.getItem('inc_income')) localStorage.setItem('inc_income', defaultIncome);
-if (!localStorage.getItem('inc_fixed')) localStorage.setItem('inc_fixed', JSON.stringify(defaultFixedExpenses));
-if (!localStorage.getItem('inc_loans')) localStorage.setItem('inc_loans', JSON.stringify(defaultLoans));
-if (!localStorage.getItem('inc_daily_spent')) localStorage.setItem('inc_daily_spent', JSON.stringify([]));
-
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('monthly-income').value = localStorage.getItem('inc_income');
-    renderFixedExpenses();
-    renderLoans();
-    renderDailyExpenses();
-    calculateDashboard();
-});
-
-// Gelir Güncelleme (İstediğin an değiştirebilirsin)
-function updateIncome(val) {
-    localStorage.setItem('inc_income', Number(val));
-    calculateDashboard();
+function saveDb() {
+    localStorage.setItem('fa_expenses', JSON.stringify(db.expenses));
+    localStorage.setItem('fa_salaries', JSON.stringify(db.salaries));
+    localStorage.setItem('fa_status', JSON.stringify(db.status));
+    localStorage.setItem('fa_investments', JSON.stringify(db.investments));
+    localStorage.setItem('fa_settings', JSON.stringify(db.settings));
 }
 
-// Tab Değiştirici Motor
-function switchTab(tabId, btnElement) {
-    document.querySelectorAll('.tab-section').forEach(sec => sec.classList.add('hidden'));
-    document.getElementById(tabId).classList.remove('hidden');
-    
-    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-    btnElement.classList.add('active');
+// 2026-2027 Aylarını Otomatik Oluştur
+function generateDefaultSalaries() {
+    const months = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+    let defaultSalaries = [];
+    ['2026', '2027'].forEach(year => {
+        months.forEach((m, index) => {
+            let monthKey = `${year}-${String(index + 1).padStart(2, '0')}`;
+            defaultSalaries.push({ id: monthKey, label: `${m} ${year}`, estimated: null, actual: null });
+        });
+    });
+    return defaultSalaries;
 }
 
-// Günlük Harcama Ekleme
-function submitExpense() {
-    const amountInput = document.getElementById('exp-amount');
-    const categoryInput = document.getElementById('exp-category');
-    const amount = Number(amountInput.value);
-    
-    if (!amount || amount <= 0) return;
+// ---- NAVİGASYON (MENÜLER ARASI GEÇİŞ) ----
+function openScreen(screenId, title) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+    document.getElementById(screenId).classList.remove('hidden');
+    document.getElementById('back-btn').classList.remove('hidden');
+    document.getElementById('page-title').innerText = title;
 
-    const dailySpent = JSON.parse(localStorage.getItem('inc_daily_spent'));
-    dailySpent.push({
-        amount,
-        category: categoryInput.value,
-        date: new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })
+    if(screenId === 'screen-expense') initExpenseScreen();
+    if(screenId === 'screen-salary') renderSalaries();
+    if(screenId === 'screen-status') renderStatus();
+    if(screenId === 'screen-investment') renderInvestments();
+}
+
+function goHome() {
+    document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+    document.getElementById('screen-home').classList.remove('hidden');
+    document.getElementById('back-btn').classList.add('hidden');
+    document.getElementById('page-title').innerText = "Finans Ajandam";
+}
+
+// ---- MENÜ 1: HARCAMA EKLE ----
+function initExpenseScreen() {
+    const select = document.getElementById('exp-month-select');
+    select.innerHTML = '';
+    // Ay listesini select box'a doldur (Bugünün ayı seçili olsun)
+    const currentMonthKey = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
+    
+    db.salaries.forEach(s => {
+        const option = document.createElement('option');
+        option.value = s.id;
+        option.text = s.label;
+        if(s.id === currentMonthKey) option.selected = true;
+        select.appendChild(option);
     });
 
-    localStorage.setItem('inc_daily_spent', JSON.stringify(dailySpent));
-    amountInput.value = '';
+    select.onchange = renderExpenses;
+    renderExpenses();
+}
+
+function addExpense() {
+    const month = document.getElementById('exp-month-select').value;
+    const amount = Number(document.getElementById('exp-amount').value);
+    const category = document.getElementById('exp-category').value;
+    const desc = document.getElementById('exp-desc').value;
+
+    if(!amount || amount <= 0) return alert("Lütfen tutar giriniz.");
+
+    db.expenses.push({ 
+        id: Date.now(), 
+        month, 
+        amount, 
+        category, 
+        desc, 
+        date: new Date().toLocaleDateString('tr-TR') 
+    });
     
-    renderDailyExpenses();
-    calculateDashboard();
+    saveDb();
+    
+    document.getElementById('exp-amount').value = '';
+    document.getElementById('exp-desc').value = '';
+    renderExpenses();
 }
 
-// Sabit Giderleri Ekrana Çizme
-function renderFixedExpenses() {
-    const fixed = JSON.parse(localStorage.getItem('inc_fixed'));
-    const tbody = document.getElementById('fixed-tbody');
-    tbody.innerHTML = '';
-
-    fixed.forEach(item => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td><strong>${item.name}</strong></td>
-            <td>${item.detail}</td>
-            <td>${item.amount} TL</td>
-            <td>
-                <span class="status-badge ${item.paid ? 'paid' : 'unpaid'}" onclick="toggleStatus('fixed', '${item.id}')">
-                    ${item.paid ? 'Ödendi' : 'Ödenmedi'}
-                </span>
-            </td>
-        `;
-        tbody.appendChild(tr);
-    });
-}
-
-// Kredileri Ekrana Çizme
-function renderLoans() {
-    const loans = JSON.parse(localStorage.getItem('inc_loans'));
-    const tbody = document.getElementById('loans-tbody');
-    tbody.innerHTML = '';
-
-    loans.forEach(item => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${item.name}</td>
-            <td><small>${item.date}</small></td>
-            <td>${item.amount.toLocaleString('tr-TR')} TL</td>
-            <td>
-                <span class="status-badge ${item.paid ? 'paid' : 'unpaid'}" onclick="toggleStatus('loans', '${item.id}')">
-                    ${item.paid ? 'Ödendi' : 'Ödenmedi'}
-                </span>
-            </td>
-        `;
-        tbody.appendChild(tr);
-    });
-}
-
-// Günlük Harcama Geçmişini Listeleme
-function renderDailyExpenses() {
-    const dailySpent = JSON.parse(localStorage.getItem('inc_daily_spent'));
-    const list = document.getElementById('daily-log-list');
+function renderExpenses() {
+    const selectedMonth = document.getElementById('exp-month-select').value;
+    const list = document.getElementById('expense-list');
     list.innerHTML = '';
-
+    
     let total = 0;
-    [...dailySpent].reverse().forEach(item => {
-        total += item.amount;
-        const li = document.createElement('li');
-        li.innerHTML = `<span>${item.category} <small>(${item.date})</small></span> <span class="price">-${item.amount} TL</span>`;
-        list.appendChild(li);
+    const filtered = db.expenses.filter(e => e.month === selectedMonth).reverse();
+    
+    filtered.forEach(exp => {
+        total += exp.amount;
+        list.innerHTML += `
+            <li>
+                <div class="item-left">
+                    <strong>${exp.category}</strong>
+                    <small>${exp.desc ? exp.desc + ' | ' : ''}${exp.date}</small>
+                </div>
+                <div class="item-right item-amount text-danger">-${exp.amount} TL</div>
+            </li>
+        `;
     });
-
-    document.getElementById('total-daily-spent').innerText = total;
+    document.getElementById('monthly-total-expense').innerText = total.toLocaleString('tr-TR');
 }
 
-// Ödendi / Ödenmedi Durumunu Tersine Çeviren Fonksiyon
-function toggleStatus(type, id) {
-    const key = type === 'fixed' ? 'inc_fixed' : 'inc_loans';
-    const data = JSON.parse(localStorage.getItem(key));
-    const item = data.find(x => x.id === id);
-    if (item) {
-        item.paid = !item.paid;
-        localStorage.setItem(key, JSON.stringify(data));
-        if (type === 'fixed') renderFixedExpenses(); else renderLoans();
-        calculateDashboard();
+// ---- MENÜ 2: MAAŞ YÖNETİMİ ----
+function renderSalaries() {
+    const list = document.getElementById('salary-list');
+    list.innerHTML = '';
+    const isHidden = db.settings.salaryHidden;
+
+    db.salaries.forEach(s => {
+        // Gerçek maaş girilmişse durumu Gerçek, girilmemişse Tahmini kabul et.
+        const activeStatus = s.actual ? '<span class="badge gercek">Gerçek</span>' : '<span class="badge tahmini">Tahmini</span>';
+        
+        list.innerHTML += `
+            <li class="salary-item">
+                <div class="salary-header">
+                    <span>${s.label}</span>
+                    ${activeStatus}
+                </div>
+                <div class="salary-inputs">
+                    <div>
+                        <small>Tahmini (TL)</small>
+                        <input type="number" class="salary-input ${isHidden ? 'blur-active' : ''}" 
+                               value="${s.estimated || ''}" 
+                               onchange="updateSalary('${s.id}', 'estimated', this.value)">
+                    </div>
+                    <div>
+                        <small>Gerçek Yatan (TL)</small>
+                        <input type="number" class="salary-input ${isHidden ? 'blur-active' : ''}" 
+                               value="${s.actual || ''}" 
+                               onchange="updateSalary('${s.id}', 'actual', this.value)">
+                    </div>
+                </div>
+            </li>
+        `;
+    });
+}
+
+function updateSalary(id, field, value) {
+    const index = db.salaries.findIndex(s => s.id === id);
+    if(index !== -1) {
+        db.salaries[index][field] = value ? Number(value) : null;
+        saveDb();
+        renderSalaries();
     }
 }
 
-// Ana Hesaplama Algoritması (Dashboard)
-function calculateDashboard() {
-    const income = Number(localStorage.getItem('inc_income'));
-    const fixed = JSON.parse(localStorage.getItem('inc_fixed'));
-    const loans = JSON.parse(localStorage.getItem('inc_loans'));
-    const dailySpent = JSON.parse(localStorage.getItem('inc_daily_spent'));
-
-    // Bu ay henüz ödenmemiş olan sabit giderlerin toplamı
-    const totalUnpaidFixed = fixed.reduce((sum, item) => sum + (item.paid ? 0 : item.amount), 0);
+// ---- MENÜ 3: GENEL DURUM ----
+function renderStatus() {
+    const list = document.getElementById('account-list');
+    list.innerHTML = '';
+    const isHidden = db.settings.statusHidden;
     
-    // Bu ay vadesi gelip ödenmemiş olan kredi taksitleri (Mevcut ayın taksiti kontrolü)
-    // Basitlik adına, bu ay ödenmesi gereken ama "unpaid" olan aktif kredileri düşüyoruz
-    const activeUnpaidLoan = loans.reduce((sum, item) => {
-        // Eğer taksit tarihi içinde bulunduğumuz aya aitse ve ödenmediyse bütçeden düşer
-        const currentMonthStr = "." + String(new Date().getMonth() + 1).padStart(2, '0') + ".";
-        if (item.date.includes(currentMonthStr) && !item.paid) {
-            return sum + item.amount;
-        }
-        return sum;
-    }, 0);
+    // Rakamları Göster/Gizle butonu metnini ayarla
+    document.getElementById('btn-status-toggle').innerText = isHidden ? "👁️ Rakamları Göster" : "👁️ Rakamları Gizle";
 
-    // Bu ay yapılan anlık harcamaların toplamı
-    const totalDailySpent = dailySpent.reduce((sum, item) => sum + item.amount, 0);
+    let total = 0;
+    db.status.forEach((acc, index) => {
+        total += acc.balance;
+        list.innerHTML += `
+            <li>
+                <div class="item-left"><strong>${acc.name}</strong></div>
+                <div class="item-right item-amount blur-status ${isHidden ? 'blur-active' : ''}">
+                    ${acc.balance.toLocaleString('tr-TR')} TL
+                    <button style="border:none; background:none; color:red; margin-left:10px;" onclick="deleteStatus(${index})">X</button>
+                </div>
+            </li>
+        `;
+    });
+    
+    const totalEl = document.getElementById('total-status-balance');
+    totalEl.innerText = `${total.toLocaleString('tr-TR')} TL`;
+    if(isHidden) totalEl.classList.add('blur-active'); else totalEl.classList.remove('blur-active');
+}
 
-    // Kalan Gün Hesaplama
-    const today = new Date();
-    const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-    const daysLeft = lastDay.getDate() - today.getDate() + 1;
+function addAccount() {
+    const name = document.getElementById('acc-name').value;
+    const balance = Number(document.getElementById('acc-balance').value);
+    
+    if(!name || isNaN(balance)) return;
 
-    // MATEMATİKSEL LİMİT FORMÜLÜ:
-    // (Toplam Gelir - Ödenmemiş Sabitler - Ödenmemiş Aktif Kredi - Bu Ay Yapılan Harcamalar) / Kalan Gün
-    const remainingPool = income - totalUnpaidFixed - activeUnpaidLoan - totalDailySpent;
-    const dailyLimit = remainingPool > 0 ? Math.round(remainingPool / daysLeft) : 0;
+    // Aynı isimde varsa güncelle, yoksa ekle
+    const existIndex = db.status.findIndex(s => s.name.toLowerCase() === name.toLowerCase());
+    if(existIndex !== -1) db.status[existIndex].balance = balance;
+    else db.status.push({ name, balance });
 
-    // Verileri Ekrana Yazdır
-    document.getElementById('calc-daily-limit').innerText = `${dailyLimit.toLocaleString('tr-TR')} TL`;
-    document.getElementById('calc-days-left').innerText = daysLeft;
+    saveDb();
+    document.getElementById('acc-name').value = '';
+    document.getElementById('acc-balance').value = '';
+    renderStatus();
+}
+
+function deleteStatus(index) {
+    db.status.splice(index, 1);
+    saveDb();
+    renderStatus();
+}
+
+// ---- MENÜ 4: YATIRIM & BİRİKİM ----
+function renderInvestments() {
+    const list = document.getElementById('investment-list');
+    list.innerHTML = '';
+    
+    db.investments.forEach((inv, index) => {
+        list.innerHTML += `
+            <li>
+                <div class="item-left">
+                    <strong>${inv.name}</strong>
+                    <small>Miktar: ${inv.amount}</small>
+                </div>
+                <div class="item-right item-amount">
+                    ${inv.value.toLocaleString('tr-TR')} TL
+                    <button style="border:none; background:none; color:red; margin-left:10px;" onclick="deleteInv(${index})">X</button>
+                </div>
+            </li>
+        `;
+    });
+}
+
+function addInvestment() {
+    const name = document.getElementById('inv-name').value;
+    const amount = Number(document.getElementById('inv-amount').value);
+    const value = Number(document.getElementById('inv-value').value);
+
+    if(!name) return;
+
+    db.investments.push({ name, amount, value });
+    saveDb();
+    
+    document.getElementById('inv-name').value = '';
+    document.getElementById('inv-amount').value = '';
+    document.getElementById('inv-value').value = '';
+    renderInvestments();
+}
+
+function deleteInv(index) {
+    db.investments.splice(index, 1);
+    saveDb();
+    renderInvestments();
+}
+
+// ---- ORTAK GİZLİLİK (BLUR) YÖNETİMİ ----
+function toggleVisibility(type) {
+    if(type === 'salary') {
+        db.settings.salaryHidden = !db.settings.salaryHidden;
+        saveDb();
+        renderSalaries();
+    } else if (type === 'status') {
+        db.settings.statusHidden = !db.settings.statusHidden;
+        saveDb();
+        renderStatus();
+    }
 }

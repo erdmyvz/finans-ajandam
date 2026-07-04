@@ -3,130 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Finans Ajandam</title>
-    
+    <!-- iOS Native App Etiketleri (Safari Çubuğunu Gizler) -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Ajandam">
-    
+    <title>Finans Ajandam</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon-192.png">
 </head>
 <body>
 
+    <!-- ÜST BAR -->
     <header class="app-header">
-        <div class="income-view">
-            <span>Aylık Gelir:</span>
-            <input type="number" id="monthly-income" onchange="updateIncome(this.value)" title="Değiştirmek için dokunun">
-            <span class="currency">TL</span>
-        </div>
-        <div class="daily-allowance">
-            <p>Bugün Harcayabileceğin</p>
-            <h1 id="calc-daily-limit">0 TL</h1>
-            <small>Ayın bitimine <span id="calc-days-left">0</span> gün kaldı</small>
-        </div>
+        <button id="back-btn" class="hidden" onclick="goHome()">◀ Ana Menü</button>
+        <h2 id="page-title">Finans Ajandam</h2>
     </header>
 
     <main class="app-content">
-        
-        <section id="tab-harcama" class="tab-section">
-            <div class="card">
-                <h3>Hızlı Harcama Ekle</h3>
-                <div class="input-group">
-                    <input type="number" id="exp-amount" placeholder="Tutar (TL)" inputmode="decimal">
-                    <select id="exp-category">
-                        <option value="Yemek/Market">Yemek / Market</option>
-                        <option value="Ulaşım (Ekstra)">Ulaşım (Ekstra)</option>
-                        <option value="Keyfi">Keyfi Harcama</option>
-                        <option value="Diğer">Diğer Gider</option>
-                    </select>
-                    <button onclick="submitExpense()">Ekle</button>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h3>Bu Ayın Günlük Harcamaları (<span id="total-daily-spent">0</span> TL)</h3>
-                <ul id="daily-log-list" class="log-list"></ul>
-            </div>
-        </section>
 
-        <section id="tab-odemeler" class="tab-section hidden">
+        <!-- ANA MENÜ EKRANI -->
+        <div id="screen-home" class="screen">
+            <div class="menu-grid">
+                <button class="menu-card" onclick="openScreen('screen-expense', 'Harcama Ekle')">
+                    <span class="icon">💸</span>
+                    <h3>Harcama Ekle</h3>
+                    <p>Günlük Giderler</p>
+                </button>
+                <button class="menu-card" onclick="openScreen('screen-salary', 'Maaş Yönetimi')">
+                    <span class="icon">💰</span>
+                    <h3>Maaş</h3>
+                    <p>Tahmini & Gerçek</p>
+                </button>
+                <button class="menu-card" onclick="openScreen('screen-status', 'Genel Durum')">
+                    <span class="icon">🏦</span>
+                    <h3>Genel Durum</h3>
+                    <p>Hesaplar & Banka</p>
+                </button>
+                <button class="menu-card" onclick="openScreen('screen-investment', 'Yatırım & Birikim')">
+                    <span class="icon">📈</span>
+                    <h3>Yatırım - Birikim</h3>
+                    <p>Altın, Fon, Döviz</p>
+                </button>
+            </div>
+        </div>
+
+        <!-- 1. HARCAMA EKLE EKRANI -->
+        <div id="screen-expense" class="screen hidden">
+            <div class="card form-card">
+                <select id="exp-month-select" class="input-field"></select>
+                <input type="number" id="exp-amount" class="input-field" placeholder="Tutar (TL)" inputmode="decimal">
+                <select id="exp-category" class="input-field">
+                    <option value="Yemek/Market">Yemek / Market</option>
+                    <option value="Ulaşım">Ulaşım</option>
+                    <option value="Abonelik/Fatura">Abonelik / Fatura</option>
+                    <option value="Keyfi">Keyfi Harcama</option>
+                    <option value="Diğer">Diğer</option>
+                </select>
+                <input type="text" id="exp-desc" class="input-field" placeholder="Açıklama (İsteğe bağlı)">
+                <button class="btn-primary" onclick="addExpense()">Harcama Ekle</button>
+            </div>
             <div class="card">
-                <h3>Kredi Taksit Takibi (12 Taksit x 28.895 TL)</h3>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <th>Taksit</th>
-                            <th>Tarih</th>
-                            <th>Tutar</th>
-                            <th>Durum</th>
-                        </thead>
-                        <tbody id="loans-tbody"></tbody>
-                    </table>
-                </div>
+                <h3 class="card-title">Seçili Ayın Harcamaları (<span id="monthly-total-expense">0</span> TL)</h3>
+                <ul id="expense-list" class="list-group"></ul>
             </div>
+        </div>
 
+        <!-- 2. MAAŞ EKRANI -->
+        <div id="screen-salary" class="screen hidden">
+            <div class="header-action">
+                <p class="info-text">Tahmini ve yatan maaşları buradan yönet.</p>
+                <button class="btn-toggle" onclick="toggleVisibility('salary')">👁️ Rakamları Gizle/Göster</button>
+            </div>
             <div class="card">
-                <h3>Aylık Düzenli Giderler (10.000 TL Şablonu)</h3>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <th>Gider Adı</th>
-                            <th>Detay / Gün</th>
-                            <th>Tutar</th>
-                            <th>Durum</th>
-                        </thead>
-                        <tbody id="fixed-tbody"></tbody>
-                    </table>
-                </div>
+                <ul id="salary-list" class="list-group">
+                    <!-- Javascript ile aylar buraya eklenecek -->
+                </ul>
             </div>
-        </section>
+        </div>
 
-        <section id="tab-varliklar" class="tab-section hidden">
-            <div class="card status-card">
-                <h3>Maddi Durum Bilançosu</h3>
-                <div class="status-row"><span>Eren (Altın/Nakit Hesap):</span> <strong>275.712 TL</strong></div>
-                <div class="status-row"><span>Cepteki Nakit Değeri:</span> <strong>93.240 TL</strong></div>
-                <div class="status-row"><span>Banka Bakiyesi:</span> <strong>10.000 TL</strong></div>
-                <div class="status-row highlight"><span>Gelecek Toplam Para:</span> <strong>904.840 TL</strong></div>
-                <div class="status-row alert"><span>Geri Ödemeler Toplamı:</span> <strong>609.983 TL</strong></div>
+        <!-- 3. GENEL DURUM EKRANI -->
+        <div id="screen-status" class="screen hidden">
+            <div class="header-action">
+                <p class="info-text">Banka, nakit ve genel hesap durumların.</p>
+                <button class="btn-toggle" id="btn-status-toggle" onclick="toggleVisibility('status')">👁️ Rakamları Göster</button>
             </div>
+            <div class="card form-card">
+                <input type="text" id="acc-name" class="input-field" placeholder="Hesap/Banka Adı (Örn: Ziraat, Nakit)">
+                <input type="number" id="acc-balance" class="input-field" placeholder="Bakiye (TL)" inputmode="decimal">
+                <button class="btn-primary" onclick="addAccount()">Hesap Ekle / Güncelle</button>
+            </div>
+            <div class="card">
+                <h3 class="card-title">Toplam Varlık: <span class="blur-status blur-active" id="total-status-balance">0 TL</span></h3>
+                <ul id="account-list" class="list-group"></ul>
+            </div>
+        </div>
 
-            <div class="card milestone-card">
-                <h3>Kritik Kilometre Taşları (2026)</h3>
-                <div class="timeline-item orange">
-                    <span class="date">20.07.2026</span>
-                    <span class="text">Araç Teslim Zamanı 🚗</span>
-                </div>
-                <div class="timeline-item red">
-                    <span class="date">04.10.2026</span>
-                    <span class="text">İşten Ayrılış / Kıdem Süreci (4 Yıl)</span>
-                </div>
-                <div class="timeline-item green">
-                    <span class="date">Tahmini</span>
-                    <span class="text">Kıdem Tazminatı Girişi (+336.000 TL)</span>
-                </div>
-                <div class="timeline-item gray">
-                    <span class="date">04.11.2026</span>
-                    <span class="text">Askerlik Nedeniyle İstifa ve Sevk Dönemi</span>
-                </div>
+        <!-- 4. YATIRIM VE BİRİKİM EKRANI -->
+        <div id="screen-investment" class="screen hidden">
+             <div class="card form-card">
+                <input type="text" id="inv-name" class="input-field" placeholder="Yatırım Cinsi (Örn: Gram Altın)">
+                <input type="number" id="inv-amount" class="input-field" placeholder="Miktar / Adet" inputmode="decimal">
+                <input type="number" id="inv-value" class="input-field" placeholder="Toplam Değer (TL)" inputmode="decimal">
+                <button class="btn-primary" onclick="addInvestment()">Yatırım Ekle / Güncelle</button>
             </div>
-        </section>
+            <div class="card">
+                <ul id="investment-list" class="list-group"></ul>
+            </div>
+        </div>
 
     </main>
-
-    <nav class="app-navigation">
-        <button class="nav-btn active" onclick="switchTab('tab-harcama', this)">
-            <span class="icon">💸</span><span class="label">Harcamalar</span>
-        </button>
-        <button class="nav-btn" onclick="switchTab('tab-odemeler', this)">
-            <span class="icon">🗓️</span><span class="label">Ödemeler</span>
-        </button>
-        <button class="nav-btn" onclick="switchTab('tab-varliklar', this)">
-            <span class="icon">📊</span><span class="label">Genel Durum</span>
-        </button>
-    </nav>
 
     <script src="app.js"></script>
     <script>

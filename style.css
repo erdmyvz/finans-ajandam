@@ -1,174 +1,67 @@
 :root {
     --bg-color: #f2f2f7;
     --card-bg: #ffffff;
-    --text-main: #1c1c1e;
     --primary: #007aff;
+    --text-main: #1c1c1e;
+    --text-muted: #8e8e93;
     --success: #34c759;
-    --danger: #ff3b30;
     --warning: #ff9500;
-    --border-color: #e5e5ea;
+    --danger: #ff3b30;
+    --border: #e5e5ea;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
 
-body {
-    background-color: var(--bg-color);
-    color: var(--text-main);
-    padding-bottom: 90px; /* Navigasyon barı için boşluk */
-    overflow-x: hidden;
-}
+body { background-color: var(--bg-color); color: var(--text-main); -webkit-tap-highlight-color: transparent; }
 
-/* Üst Özet Barı */
-.app-header {
-    background: #000000;
-    color: #ffffff;
-    padding: 40px 20px 25px 20px;
-    text-align: center;
-    border-bottom-left-radius: 24px;
-    border-bottom-right-radius: 24px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-}
+/* Üst Header */
+.app-header { background: #000; color: #fff; padding: 50px 20px 15px 20px; display: flex; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+#back-btn { background: none; border: none; color: var(--primary); font-size: 16px; font-weight: 500; cursor: pointer; position: absolute; left: 15px; }
+#page-title { flex-grow: 1; text-align: center; font-size: 18px; font-weight: 600; }
 
-.income-view {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 15px;
-    font-size: 15px;
-    opacity: 0.9;
-}
+.app-content { padding: 20px; max-width: 500px; margin: 0 auto; padding-bottom: 50px; }
+.hidden { display: none !important; }
 
-.income-view input {
-    background: #2c2c2e;
-    border: none;
-    color: var(--success);
-    font-weight: bold;
-    font-size: 16px;
-    padding: 6px 10px;
-    border-radius: 6px;
-    width: 90px;
-    text-align: center;
-}
+/* Ana Menü Grid */
+.menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.menu-card { background: var(--card-bg); border: none; border-radius: 16px; padding: 25px 15px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.04); cursor: pointer; transition: transform 0.1s; }
+.menu-card:active { transform: scale(0.96); }
+.menu-card .icon { font-size: 40px; display: block; margin-bottom: 10px; }
+.menu-card h3 { font-size: 16px; margin-bottom: 5px; color: var(--text-main); }
+.menu-card p { font-size: 12px; color: var(--text-muted); }
 
-.daily-allowance h1 {
-    font-size: 44px;
-    color: var(--success);
-    font-weight: 800;
-    margin: 5px 0;
-}
+/* Ortak Kart Yapısı */
+.card { background: var(--card-bg); border-radius: 14px; padding: 18px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+.card-title { font-size: 16px; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
 
-.daily-allowance small {
-    opacity: 0.6;
-    font-size: 13px;
-}
+/* Formlar */
+.form-card { display: flex; flex-direction: column; gap: 12px; }
+.input-field { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 10px; font-size: 16px; background: #fafafa; color: var(--text-main); -webkit-appearance: none; }
+.btn-primary { background: var(--primary); color: #fff; border: none; padding: 15px; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; width: 100%; }
+.btn-primary:active { opacity: 0.8; }
 
-/* İçerik Kartları */
-.app-content { padding: 15px; max-width: 500px; margin: 0 auto; }
-.card {
-    background: var(--card-bg);
-    border-radius: 14px;
-    padding: 16px;
-    margin-bottom: 15px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-}
-.card h3 { font-size: 16px; margin-bottom: 12px; color: #3a3a3c; border-left: 4px solid var(--primary); padding-left: 8px; }
-
-/* Form Elemanları */
-.input-group { display: flex; flex-direction: column; gap: 10px; }
-input, select {
-    width: 100%;
-    padding: 14px;
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    font-size: 16px;
-    background: #fafafa;
-    color: var(--text-main);
-    -webkit-appearance: none; /* iOS default stil temizliği */
-}
-
-button {
-    background: var(--primary);
-    color: #fff;
-    border: none;
-    padding: 14px;
-    border-radius: 10px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-}
-button:active { opacity: 0.8; }
+.header-action { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+.info-text { font-size: 13px; color: var(--text-muted); }
+.btn-toggle { background: #e5e5ea; border: none; padding: 8px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; }
 
 /* Listeler */
-.log-list li {
-    display: flex;
-    justify-content: space-between;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border-color);
-    font-size: 15px;
-}
-.log-list li:last-child { border: none; }
-.log-list .price { color: var(--danger); font-weight: 600; }
+.list-group { list-style: none; }
+.list-group li { padding: 15px 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.list-group li:last-child { border-bottom: none; }
+.item-left strong { display: block; font-size: 15px; margin-bottom: 3px; }
+.item-left small { color: var(--text-muted); font-size: 12px; }
+.item-right { text-align: right; }
+.item-amount { font-weight: bold; font-size: 16px; }
 
-/* Tablolar (Krediler ve Sabit Giderler İçin) */
-.table-responsive { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
-th, td { padding: 12px 8px; border-bottom: 1px solid var(--border-color); }
-th { font-weight: 600; color: #8e8e93; }
+/* GİZLEME (BLUR) EFEKTLERİ */
+.blur-active { filter: blur(6px); opacity: 0.7; user-select: none; transition: filter 0.3s ease; }
+.blur-active:active { filter: blur(0); opacity: 1; } /* Basılı tutunca göster özelliği */
 
-/* Ödendi / Ödenmedi Switch Tasarımı */
-.status-badge {
-    padding: 6px 10px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: bold;
-    cursor: pointer;
-    display: inline-block;
-    text-align: center;
-}
-.status-badge.paid { background: #e3fbe3; color: var(--success); }
-.status-badge.unpaid { background: #ffebeb; color: var(--danger); }
-
-/* Bilanço ve Yol Haritası */
-.status-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-color); font-size: 15px; }
-.status-row.highlight { color: var(--success); font-weight: 600; }
-.status-row.alert { color: var(--danger); font-weight: 600; }
-.timeline-item { display: flex; gap: 15px; padding: 12px 0; border-left: 2px solid var(--border-color); padding-left: 15px; margin-left: 10px; position: relative; }
-.timeline-item::before { content: ''; width: 10px; height: 10px; border-radius: 50%; position: absolute; left: -6px; top: 16px; }
-.timeline-item.orange::before { background: var(--warning); }
-.timeline-item.red::before { background: var(--danger); }
-.timeline-item.green::before { background: var(--success); }
-.timeline-item.gray::before { background: #8e8e93; }
-.timeline-item .date { font-weight: bold; font-size: 13px; min-width: 80px; }
-
-/* Alt Navigasyon Barı */
-.app-navigation {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    height: 65px;
-    background: rgba(255, 255, 255, 0.94);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    display: flex;
-    justify-content: space-around;
-    border-top: 1px solid var(--border-color);
-    padding-bottom: env(safe-area-inset-bottom); /* iOS Çentik koruması */
-    z-index: 999;
-}
-.nav-btn {
-    background: none;
-    border: none;
-    color: #8e8e93;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    font-weight: 500;
-    padding: 0;
-    width: 33%;
-}
-.nav-btn .icon { font-size: 20px; margin-bottom: 2px; }
-.nav-btn.active { color: var(--primary); }
-
-.hidden { display: none !important; }
+/* Maaş Özel Listesi */
+.salary-item { flex-direction: column; align-items: stretch !important; gap: 10px; }
+.salary-header { display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 16px; }
+.salary-inputs { display: flex; gap: 10px; }
+.salary-inputs input { flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; }
+.badge { font-size: 11px; padding: 4px 8px; border-radius: 6px; color: white; }
+.badge.tahmini { background: var(--warning); }
+.badge.gercek { background: var(--success); }
