@@ -1,22 +1,17 @@
-// EXCEL BAZLI TAHMİNİ MAAŞLAR (Nisan 2026 - Ocak 2027)
+// EXCEL BAZLI VERİLER
 const EXCEL_SALARIES = {
     '2026-04': 63300, '2026-05': 60900, '2026-06': 65000, '2026-07': 60000,
     '2026-08': 56000, '2026-09': 57000, '2026-10': 57000, '2026-11': 57000,
     '2026-12': 57000, '2027-01': 57000
 };
 
-// EXCEL SABİT GİDERLER (Tarihli)
 const EXCEL_FIXED_EXPENSES = [
-    { name: 'BES', amount: 1000, day: 4 },
-    { name: 'Ulaşım Toplam', amount: 5625, day: 4 },
-    { name: 'Telefon', amount: 600, day: 4 },
-    { name: 'Adobe', amount: 600, day: 11 },
-    { name: 'Youtube', amount: 100, day: 17 },
-    { name: 'iCloud', amount: 400, day: 27 },
+    { name: 'BES', amount: 1000, day: 4 }, { name: 'Ulaşım Toplam', amount: 5625, day: 4 },
+    { name: 'Telefon', amount: 600, day: 4 }, { name: 'Adobe', amount: 600, day: 11 },
+    { name: 'Youtube', amount: 100, day: 17 }, { name: 'iCloud', amount: 400, day: 27 },
     { name: 'Harçlık', amount: 1675, day: 4 }
 ];
 
-// EXCEL KREDİLER (Tarihli: Her ayın 22'si)
 const EXCEL_CREDITS = [
     { month: '2026-07', amount: 28895, name: '1. Taksit', day: 22 }, { month: '2026-08', amount: 28895, name: '2. Taksit', day: 22 },
     { month: '2026-09', amount: 28895, name: '3. Taksit', day: 22 }, { month: '2026-10', amount: 28895, name: '4. Taksit', day: 22 },
@@ -26,7 +21,7 @@ const EXCEL_CREDITS = [
     { month: '2027-05', amount: 28895, name: '11. Taksit', day: 22 }, { month: '2027-06', amount: 28895, name: '12. Taksit', day: 22 }
 ];
 
-// UYGULAMA VERİ TABANI
+// VERİTABANI
 const db = {
     expenses: JSON.parse(localStorage.getItem('fa_expenses')) || [],
     salaries: JSON.parse(localStorage.getItem('fa_salaries')) || generateDefaultSalaries(),
@@ -46,7 +41,6 @@ function getLogTime() {
     return `${now.toLocaleDateString('tr-TR')} - ${now.toLocaleTimeString('tr-TR', {hour: '2-digit', minute:'2-digit'})}`;
 }
 
-// CANLI SAAT MOTORU
 function startLiveClock() {
     setInterval(() => {
         const now = new Date();
@@ -62,7 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
     renderDashboard();
 });
 
-// AYLARI VE EXCEL MAAŞLARINI OLUŞTUR (Ek Gelir Entegreli)
 function generateDefaultSalaries() {
     const months = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
     let defaults = [];
@@ -75,13 +68,11 @@ function generateDefaultSalaries() {
     return defaults;
 }
 
-// OTOMATİK SABİT VE KREDİ YÜKLEMESİ (Gün Verileriyle)
 function syncAutoPayments() {
     db.salaries.forEach(s => {
-        // Eski veritabanlarında extra değeri yoksa tanımla
         if (s.extra === undefined) s.extra = null;
-
         const month = s.id;
+        
         const hasFixed = db.payments.some(p => p.month === month && p.type === 'fixed');
         if (!hasFixed) {
             EXCEL_FIXED_EXPENSES.forEach(f => {
@@ -117,7 +108,7 @@ function populateMonthSelectors() {
     });
 }
 
-// ---- DASHBOARD (ANA EKRAN) ----
+// ---- DASHBOARD ----
 function renderDashboard() {
     const selectedMonth = document.getElementById('dash-month-select').value;
     const salaryObj = db.salaries.find(s => s.id === selectedMonth);
@@ -140,8 +131,6 @@ function renderDashboard() {
     
     const netEl = document.getElementById('dash-net');
     netEl.innerText = net.toLocaleString('tr-TR') + ' TL';
-    
-    // Neon Red vs Neon Green
     netEl.className = net >= 0 ? 'neon-text-green' : 'neon-text-red';
 }
 
@@ -199,11 +188,12 @@ function renderExpenses() {
     document.getElementById('monthly-total-expense').innerText = total.toLocaleString('tr-TR');
 }
 
-// ---- SABİT & KREDİ ----
+// ---- SABİT & KREDİ (DÜZENLEME DESTEKLİ) ----
 function renderPayments() {
     const month = document.getElementById('pay-month-select').value;
     const monthData = db.payments.filter(p => p.month === month);
     
+    // Sabit Listesi
     const fixedList = document.getElementById('fixed-list'); fixedList.innerHTML = ''; let fTotal = 0;
     monthData.filter(p => p.type === 'fixed').forEach(item => {
         fTotal += item.amount;
@@ -211,12 +201,14 @@ function renderPayments() {
             <div class="item-left"><strong>${item.name}</strong><span class="item-log">Gün: ${item.day || '-'} | ${item.amount.toLocaleString('tr-TR')} TL</span></div>
             <div class="payment-actions">
                 <button class="status-badge ${item.paid ? 'paid' : 'unpaid'}" onclick="togglePayment('${item.id}')">${item.paid ? 'ÖDENDİ' : 'ÖDENMEDİ'}</button>
-                <button class="btn-delete" onclick="deletePayment('${item.id}')">X</button>
+                <button class="action-icon btn-edit" onclick="openEditModal('${item.id}')">✏️</button>
+                <button class="action-icon btn-delete" onclick="deletePayment('${item.id}')">X</button>
             </div>
         </li>`;
     });
     document.getElementById('total-fixed-val').innerText = fTotal.toLocaleString('tr-TR');
 
+    // Kredi Listesi
     const creditList = document.getElementById('credit-list'); creditList.innerHTML = ''; let cTotal = 0;
     monthData.filter(p => p.type === 'credit').forEach(item => {
         cTotal += item.amount;
@@ -224,6 +216,8 @@ function renderPayments() {
             <div class="item-left"><strong>${item.name}</strong><span class="item-log">Gün: ${item.day || '-'} | ${item.amount.toLocaleString('tr-TR')} TL</span></div>
             <div class="payment-actions">
                 <button class="status-badge ${item.paid ? 'paid' : 'unpaid'}" onclick="togglePayment('${item.id}')">${item.paid ? 'ÖDENDİ' : 'ÖDENMEDİ'}</button>
+                <button class="action-icon btn-edit" onclick="openEditModal('${item.id}')">✏️</button>
+                <button class="action-icon btn-delete" onclick="deletePayment('${item.id}')">X</button>
             </div>
         </li>`;
     });
@@ -247,10 +241,40 @@ function addFixedPayment() {
     const day = Number(document.getElementById('new-fixed-day').value) || 1;
     
     if(!name || !amount) return;
-    db.payments.push({ id: Date.now(), month, name, amount, day, type: 'fixed', paid: false });
+    db.payments.push({ id: Date.now().toString(), month, name, amount, day, type: 'fixed', paid: false });
     saveDb();
     document.getElementById('new-fixed-name').value = ''; document.getElementById('new-fixed-amount').value = ''; document.getElementById('new-fixed-day').value = '';
     renderPayments();
+}
+
+// -- MODAL İŞLEMLERİ --
+function openEditModal(id) {
+    const item = db.payments.find(p => p.id == id);
+    if(!item) return;
+    
+    document.getElementById('edit-id').value = item.id;
+    document.getElementById('edit-name').value = item.name;
+    document.getElementById('edit-amount').value = item.amount;
+    document.getElementById('edit-day').value = item.day || '';
+    
+    document.getElementById('edit-modal').classList.remove('hidden');
+}
+
+function closeEditModal() {
+    document.getElementById('edit-modal').classList.add('hidden');
+}
+
+function saveEdit() {
+    const id = document.getElementById('edit-id').value;
+    const item = db.payments.find(p => p.id == id);
+    if(item) {
+        item.name = document.getElementById('edit-name').value;
+        item.amount = Number(document.getElementById('edit-amount').value);
+        item.day = Number(document.getElementById('edit-day').value) || 1;
+        saveDb();
+        renderPayments();
+        closeEditModal();
+    }
 }
 
 // ---- MAAŞ & EK GELİR ----
@@ -290,39 +314,63 @@ function toggleVisibility(type) {
     if(type === 'salary') { db.settings.salaryHidden = !db.settings.salaryHidden; saveDb(); renderSalaries(); }
 }
 
-// ---- TAKVİM VE ZAMAN ÇİZELGESİ (TIMELINE) ----
+// ---- GÖRSEL TAKVİM VE ZAMAN ÇİZELGESİ ----
 function renderCalendar() {
-    const month = document.getElementById('cal-month-select').value;
-    const container = document.getElementById('timeline-container');
-    container.innerHTML = '';
+    const monthStr = document.getElementById('cal-month-select').value;
+    const [year, month] = monthStr.split('-');
+    
+    // Gelen/Giden Verilerini Toparla
+    const salaryObj = db.salaries.find(s => s.id === monthStr);
+    const totalIncome = salaryObj ? ((salaryObj.actual || salaryObj.estimated || 0) + (salaryObj.extra || 0)) : 0;
+    const incomeDay = totalIncome > 0 ? 4 : -1; // Maaş 4'ünde varsayılıyor
+    const monthPayments = db.payments.filter(p => p.month === monthStr);
 
+    // 1. Görsel Grid Takvimi Çiz
+    const calContainer = document.getElementById('visual-calendar');
+    const daysInMonth = new Date(year, month, 0).getDate();
+    let startDay = new Date(year, month - 1, 1).getDay();
+    startDay = startDay === 0 ? 6 : startDay - 1; // Pazartesi = 0
+
+    let calHtml = `
+        <div class="cal-header">Pzt</div><div class="cal-header">Sal</div><div class="cal-header">Çar</div>
+        <div class="cal-header">Per</div><div class="cal-header">Cum</div><div class="cal-header">Cmt</div><div class="cal-header">Paz</div>
+    `;
+
+    for(let i=0; i<startDay; i++) { calHtml += `<div class="cal-day empty"></div>`; }
+
+    for(let i=1; i<=daysInMonth; i++) {
+        let classes = ['cal-day'];
+        let hasIncome = (i === incomeDay);
+        let hasExpense = monthPayments.some(p => p.day === i);
+
+        if(hasIncome && hasExpense) classes.push('mixed');
+        else if(hasIncome) classes.push('income');
+        else if(hasExpense) classes.push('expense');
+
+        calHtml += `<div class="${classes.join(' ')}">${i}</div>`;
+    }
+    calContainer.innerHTML = calHtml;
+
+    // 2. Timeline (Zaman Çizelgesi) Çiz
+    const timeContainer = document.getElementById('timeline-container');
+    timeContainer.innerHTML = '';
     let events = [];
 
-    // 1. Maaş ve Ek Gelir (Ayın 4'ü)
-    const salaryObj = db.salaries.find(s => s.id === month);
-    const baseSalary = salaryObj ? (salaryObj.actual || salaryObj.estimated || 0) : 0;
-    const extraIncome = salaryObj ? (salaryObj.extra || 0) : 0;
-    const totalIncome = baseSalary + extraIncome;
-    
     if (totalIncome > 0) {
         events.push({ day: 4, name: 'Maaş & Ek Gelir', amount: totalIncome, type: 'income', paid: true });
     }
 
-    // 2. Sabit Giderler ve Krediler
-    const monthPayments = db.payments.filter(p => p.month === month);
     monthPayments.forEach(p => {
         events.push({ day: p.day || 1, name: p.name, amount: p.amount, type: 'expense', paid: p.paid });
     });
 
-    // Gün sırasına göre diz
     events.sort((a, b) => a.day - b.day);
 
     if(events.length === 0) {
-        container.innerHTML = `<p class="neon-text-white">Bu ay için planlanmış işlem yok.</p>`;
+        timeContainer.innerHTML = `<p class="text-white">Bu ay için planlanmış işlem yok.</p>`;
         return;
     }
 
-    // HTML Oluştur
     events.forEach(ev => {
         let dotClass = 'timeline-dot';
         let textClass = '';
@@ -333,21 +381,16 @@ function renderCalendar() {
             textClass = 'neon-text-green';
             amountPrefix = '+';
         } else {
-            if (ev.paid) {
-                dotClass += ' green'; // Ödenmişse yeşil yanar
-                textClass = 'neon-text-white';
-            } else {
-                dotClass += ' red'; // Ödenmemişse kırmızı yanar
-                textClass = 'neon-text-red';
-            }
+            if (ev.paid) { dotClass += ' green'; textClass = 'text-white'; } 
+            else { dotClass += ' red'; textClass = 'neon-text-red'; }
             amountPrefix = '-';
         }
 
-        container.innerHTML += `
+        timeContainer.innerHTML += `
             <div class="timeline-item">
                 <div class="${dotClass}"></div>
                 <span class="time-date">Ayın ${ev.day}'ü</span>
-                <div class="time-content ${ev.type === 'expense' && !ev.paid ? 'neon-border' : ''}">
+                <div class="time-content">
                     <span style="color:#fff;">${ev.name}</span>
                     <span class="${textClass}">${amountPrefix}${ev.amount.toLocaleString('tr-TR')} TL</span>
                 </div>

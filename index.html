@@ -16,9 +16,9 @@
     <header class="app-header">
         <button id="back-btn" class="hidden" onclick="goHome()">◀ Menü</button>
         <div class="header-center">
-            <h2 id="page-title" class="neon-text-cyan">Finans Ajandam</h2>
-            <div class="owner-badge neon-text-gold">ERDEM YAVUZ</div>
-            <div id="live-clock" class="neon-text-white">--:--</div>
+            <h2 id="page-title" class="text-cyan">Finans Ajandam</h2>
+            <div class="owner-badge text-gold">ERDEM YAVUZ</div>
+            <div id="live-clock" class="text-white">--:--</div>
         </div>
     </header>
 
@@ -29,7 +29,7 @@
             
             <div class="card dashboard-card">
                 <div class="dash-header">
-                    <h3 class="neon-text-cyan">Aylık Rapor</h3>
+                    <h3 class="text-cyan">Aylık Rapor</h3>
                     <select id="dash-month-select" class="input-field minimal-select" onchange="renderDashboard()"></select>
                 </div>
                 
@@ -37,7 +37,7 @@
                     <span>Kalan Net:</span> <strong id="dash-net" class="neon-text-green">0 TL</strong>
                 </div>
                 
-                <button class="btn-text-toggle neon-text-cyan" onclick="toggleDashDetails()">Detayları Göster / Gizle ▼</button>
+                <button class="btn-text-toggle text-cyan" onclick="toggleDashDetails()">Detayları Göster / Gizle ▼</button>
                 
                 <div id="dash-details" class="hidden">
                     <hr class="dash-divider">
@@ -50,16 +50,16 @@
 
             <div class="menu-grid">
                 <button class="menu-card" onclick="openScreen('screen-expense', 'Harcama Ekle')">
-                    <span class="icon">💳</span><h3 class="neon-text-white">Harcama Ekle</h3>
+                    <span class="icon">💳</span><h3 class="text-white">Harcama Ekle</h3>
                 </button>
                 <button class="menu-card" onclick="openScreen('screen-payments', 'Sabit & Kredi')">
-                    <span class="icon">🏛️</span><h3 class="neon-text-white">Sabit & Kredi</h3>
+                    <span class="icon">🏛️</span><h3 class="text-white">Sabit & Kredi</h3>
                 </button>
                 <button class="menu-card" onclick="openScreen('screen-salary', 'Maaş & Ek Gelir')">
-                    <span class="icon">💎</span><h3 class="neon-text-white">Maaş Yönetimi</h3>
+                    <span class="icon">💎</span><h3 class="text-white">Maaş Yönetimi</h3>
                 </button>
                 <button class="menu-card" onclick="openScreen('screen-calendar', 'Takvim & Plan')">
-                    <span class="icon">⌚</span><h3 class="neon-text-white">Takvim Planı</h3>
+                    <span class="icon">📅</span><h3 class="text-white">Takvim Planı</h3>
                 </button>
             </div>
         </div>
@@ -67,20 +67,20 @@
         <!-- 1. HARCAMA EKLE EKRANI -->
         <div id="screen-expense" class="screen hidden">
             <div class="card form-card">
-                <select id="exp-month-select" class="input-field neon-border" onchange="renderExpenses()"></select>
-                <input type="number" id="exp-amount" class="input-field neon-border" placeholder="Tutar (TL)" inputmode="decimal">
-                <select id="exp-category" class="input-field neon-border">
+                <select id="exp-month-select" class="input-field" onchange="renderExpenses()"></select>
+                <input type="number" id="exp-amount" class="input-field" placeholder="Tutar (TL)" inputmode="decimal">
+                <select id="exp-category" class="input-field">
                     <option value="Yemek/Market">Yemek / Market</option>
                     <option value="Ulaşım">Ulaşım</option>
                     <option value="Abonelik/Fatura">Abonelik / Fatura</option>
                     <option value="Keyfi">Keyfi Harcama</option>
                     <option value="Diğer">Diğer</option>
                 </select>
-                <input type="text" id="exp-desc" class="input-field neon-border" placeholder="Açıklama (İsteğe bağlı)">
+                <input type="text" id="exp-desc" class="input-field" placeholder="Açıklama (İsteğe bağlı)">
                 <button class="btn-primary" onclick="addExpense()">Sisteme İşle</button>
             </div>
             <div class="card">
-                <h3 class="card-title neon-text-cyan">Harcamalar (<span id="monthly-total-expense">0</span> TL)</h3>
+                <h3 class="card-title text-cyan">Harcamalar (<span id="monthly-total-expense">0</span> TL)</h3>
                 <ul id="expense-list" class="list-group"></ul>
             </div>
         </div>
@@ -88,11 +88,11 @@
         <!-- 2. SABİT GİDERLER VE KREDİ -->
         <div id="screen-payments" class="screen hidden">
             <div class="header-action">
-                <select id="pay-month-select" class="input-field neon-border" onchange="renderPayments()"></select>
+                <select id="pay-month-select" class="input-field" onchange="renderPayments()"></select>
             </div>
             
             <div class="card">
-                <h3 class="card-title neon-text-cyan">Sabit Giderler (<span id="total-fixed-val">0</span> TL)</h3>
+                <h3 class="card-title text-cyan">Sabit Giderler (<span id="total-fixed-val">0</span> TL)</h3>
                 <ul id="fixed-list" class="list-group"></ul>
                 <div class="mini-form mt-15">
                     <input type="text" id="new-fixed-name" class="input-field mini-input" placeholder="Gider Adı">
@@ -103,7 +103,7 @@
             </div>
 
             <div class="card">
-                <h3 class="card-title neon-text-cyan">Kredi Ödemesi (<span id="total-credit-val">0</span> TL)</h3>
+                <h3 class="card-title text-cyan">Kredi Ödemesi (<span id="total-credit-val">0</span> TL)</h3>
                 <ul id="credit-list" class="list-group"></ul>
             </div>
         </div>
@@ -111,7 +111,7 @@
         <!-- 3. MAAŞ VE EK GELİR EKRANI -->
         <div id="screen-salary" class="screen hidden">
             <div class="header-action">
-                <p class="info-text neon-text-white">Tahmini maaş, gerçek yatan ve ek gelirler.</p>
+                <p class="info-text text-white">Tahmini maaş, gerçek yatan ve ek gelirler.</p>
                 <button class="btn-toggle" onclick="toggleVisibility('salary')">👁️ Gizle/Göster</button>
             </div>
             <div class="card">
@@ -122,17 +122,44 @@
         <!-- 4. TAKVİM VE ZAMAN ÇİZELGESİ EKRANI -->
         <div id="screen-calendar" class="screen hidden">
             <div class="header-action">
-                <select id="cal-month-select" class="input-field neon-border" onchange="renderCalendar()"></select>
+                <select id="cal-month-select" class="input-field" onchange="renderCalendar()"></select>
             </div>
+            
+            <!-- Görsel Takvim -->
             <div class="card">
-                <h3 class="card-title neon-text-cyan">Zaman Çizelgesi</h3>
-                <div id="timeline-container" class="timeline">
-                    <!-- Javascript ile tarihe göre dizilecek -->
+                <h3 class="card-title text-cyan">Görsel Takvim</h3>
+                <div id="visual-calendar" class="calendar-grid"></div>
+                <div class="cal-legend mt-15">
+                    <span class="legend-dot green"></span> Gelir
+                    <span class="legend-dot red"></span> Gider
+                    <span class="legend-dot gold"></span> İkisi de
                 </div>
+            </div>
+
+            <!-- Zaman Çizelgesi -->
+            <div class="card">
+                <h3 class="card-title text-cyan">Zaman Çizelgesi</h3>
+                <div id="timeline-container" class="timeline"></div>
             </div>
         </div>
 
     </main>
+
+    <!-- DÜZENLEME MODALI (GİZLİ) -->
+    <div id="edit-modal" class="modal hidden">
+        <div class="modal-content card">
+            <h3 class="text-cyan mb-15">Kayıt Düzenle</h3>
+            <input type="hidden" id="edit-id">
+            <input type="text" id="edit-name" class="input-field mb-10" placeholder="Gider / Kredi Adı">
+            <input type="number" id="edit-amount" class="input-field mb-10" placeholder="Tutar (TL)" inputmode="decimal">
+            <input type="number" id="edit-day" class="input-field mb-10" placeholder="Ödeme Günü (Örn: 4)" inputmode="decimal">
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeEditModal()">İptal</button>
+                <button class="btn-primary" onclick="saveEdit()">Kaydet</button>
+            </div>
+        </div>
+    </div>
+
     <script src="app.js"></script>
     <script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');</script>
 </body>
