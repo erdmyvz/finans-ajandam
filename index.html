@@ -16,8 +16,9 @@
     <header class="app-header">
         <button id="back-btn" class="hidden" onclick="goHome()">◀ Menü</button>
         <div class="header-center">
-            <h2 id="page-title">Finans Ajandam</h2>
-            <div class="owner-badge">ERDEM YAVUZ</div>
+            <h2 id="page-title" class="neon-text-cyan">Finans Ajandam</h2>
+            <div class="owner-badge neon-text-gold">ERDEM YAVUZ</div>
+            <div id="live-clock" class="neon-text-white">--:--</div>
         </div>
     </header>
 
@@ -28,43 +29,37 @@
             
             <div class="card dashboard-card">
                 <div class="dash-header">
-                    <h3>Aylık Durumum</h3>
+                    <h3 class="neon-text-cyan">Aylık Rapor</h3>
                     <select id="dash-month-select" class="input-field minimal-select" onchange="renderDashboard()"></select>
                 </div>
                 
-                <!-- Sadeleştirilmiş Ana Ekran -->
                 <div class="dash-row total net-highlight">
-                    <span>Kalan Net:</span> <strong id="dash-net">0 TL</strong>
+                    <span>Kalan Net:</span> <strong id="dash-net" class="neon-text-green">0 TL</strong>
                 </div>
                 
-                <!-- Detay Butonu -->
-                <button class="btn-text-toggle" onclick="toggleDashDetails()">Detayları Göster / Gizle ▼</button>
+                <button class="btn-text-toggle neon-text-cyan" onclick="toggleDashDetails()">Detayları Göster / Gizle ▼</button>
                 
-                <!-- Gizli Detaylar -->
                 <div id="dash-details" class="hidden">
                     <hr class="dash-divider">
-                    <div class="dash-row"><span>Maaş:</span> <strong id="dash-salary">0 TL</strong></div>
-                    <div class="dash-row"><span>Sabit Giderler:</span> <strong id="dash-fixed" class="text-danger">0 TL</strong></div>
-                    <div class="dash-row"><span>Kredi Ödemesi:</span> <strong id="dash-credit" class="text-danger">0 TL</strong></div>
-                    <div class="dash-row"><span>Aylık Harcamalar:</span> <strong id="dash-expense" class="text-danger">0 TL</strong></div>
+                    <div class="dash-row"><span>Maaş & Ek Gelir:</span> <strong id="dash-salary" class="neon-text-green">0 TL</strong></div>
+                    <div class="dash-row"><span>Sabit Giderler:</span> <strong id="dash-fixed" class="neon-text-red">0 TL</strong></div>
+                    <div class="dash-row"><span>Kredi Ödemesi:</span> <strong id="dash-credit" class="neon-text-red">0 TL</strong></div>
+                    <div class="dash-row"><span>Aylık Harcamalar:</span> <strong id="dash-expense" class="neon-text-red">0 TL</strong></div>
                 </div>
             </div>
 
             <div class="menu-grid">
                 <button class="menu-card" onclick="openScreen('screen-expense', 'Harcama Ekle')">
-                    <span class="icon">💸</span><h3>Harcama Ekle</h3>
+                    <span class="icon">💳</span><h3 class="neon-text-white">Harcama Ekle</h3>
                 </button>
                 <button class="menu-card" onclick="openScreen('screen-payments', 'Sabit & Kredi')">
-                    <span class="icon">🗓️</span><h3>Sabit & Kredi</h3>
+                    <span class="icon">🏛️</span><h3 class="neon-text-white">Sabit & Kredi</h3>
                 </button>
-                <button class="menu-card" onclick="openScreen('screen-salary', 'Maaş Yönetimi')">
-                    <span class="icon">💰</span><h3>Maaş</h3>
+                <button class="menu-card" onclick="openScreen('screen-salary', 'Maaş & Ek Gelir')">
+                    <span class="icon">💎</span><h3 class="neon-text-white">Maaş Yönetimi</h3>
                 </button>
-                <button class="menu-card" onclick="openScreen('screen-status', 'Banka / Kasa')">
-                    <span class="icon">🏦</span><h3>Banka / Kasa</h3>
-                </button>
-                <button class="menu-card" onclick="openScreen('screen-investment', 'Yatırım Planı')">
-                    <span class="icon">📈</span><h3>Yatırım</h3>
+                <button class="menu-card" onclick="openScreen('screen-calendar', 'Takvim & Plan')">
+                    <span class="icon">⌚</span><h3 class="neon-text-white">Takvim Planı</h3>
                 </button>
             </div>
         </div>
@@ -72,51 +67,51 @@
         <!-- 1. HARCAMA EKLE EKRANI -->
         <div id="screen-expense" class="screen hidden">
             <div class="card form-card">
-                <select id="exp-month-select" class="input-field" onchange="renderExpenses()"></select>
-                <input type="number" id="exp-amount" class="input-field" placeholder="Tutar (TL)" inputmode="decimal">
-                <select id="exp-category" class="input-field">
+                <select id="exp-month-select" class="input-field neon-border" onchange="renderExpenses()"></select>
+                <input type="number" id="exp-amount" class="input-field neon-border" placeholder="Tutar (TL)" inputmode="decimal">
+                <select id="exp-category" class="input-field neon-border">
                     <option value="Yemek/Market">Yemek / Market</option>
                     <option value="Ulaşım">Ulaşım</option>
                     <option value="Abonelik/Fatura">Abonelik / Fatura</option>
                     <option value="Keyfi">Keyfi Harcama</option>
                     <option value="Diğer">Diğer</option>
                 </select>
-                <input type="text" id="exp-desc" class="input-field" placeholder="Açıklama (İsteğe bağlı)">
-                <button class="btn-primary" onclick="addExpense()">Harcama Ekle</button>
+                <input type="text" id="exp-desc" class="input-field neon-border" placeholder="Açıklama (İsteğe bağlı)">
+                <button class="btn-primary" onclick="addExpense()">Sisteme İşle</button>
             </div>
             <div class="card">
-                <h3 class="card-title">Harcamalar (<span id="monthly-total-expense">0</span> TL)</h3>
+                <h3 class="card-title neon-text-cyan">Harcamalar (<span id="monthly-total-expense">0</span> TL)</h3>
                 <ul id="expense-list" class="list-group"></ul>
             </div>
         </div>
 
-        <!-- 2. SABİT GİDERLER VE KREDİ (Düzenlenebilir) -->
+        <!-- 2. SABİT GİDERLER VE KREDİ -->
         <div id="screen-payments" class="screen hidden">
             <div class="header-action">
-                <select id="pay-month-select" class="input-field" onchange="renderPayments()"></select>
+                <select id="pay-month-select" class="input-field neon-border" onchange="renderPayments()"></select>
             </div>
             
             <div class="card">
-                <h3 class="card-title">Sabit Giderler (<span id="total-fixed-val">0</span> TL)</h3>
+                <h3 class="card-title neon-text-cyan">Sabit Giderler (<span id="total-fixed-val">0</span> TL)</h3>
                 <ul id="fixed-list" class="list-group"></ul>
-                <!-- Yeni Sabit Gider Ekleme Formu -->
                 <div class="mini-form mt-15">
-                    <input type="text" id="new-fixed-name" class="input-field mini-input" placeholder="Yeni Gider Adı">
+                    <input type="text" id="new-fixed-name" class="input-field mini-input" placeholder="Gider Adı">
                     <input type="number" id="new-fixed-amount" class="input-field mini-input" placeholder="Tutar" inputmode="decimal">
+                    <input type="number" id="new-fixed-day" class="input-field mini-input" placeholder="Gün(Örn: 4)" inputmode="decimal">
                     <button class="btn-secondary" onclick="addFixedPayment()">Ekle</button>
                 </div>
             </div>
 
             <div class="card">
-                <h3 class="card-title">Kredi Ödemesi (<span id="total-credit-val">0</span> TL)</h3>
+                <h3 class="card-title neon-text-cyan">Kredi Ödemesi (<span id="total-credit-val">0</span> TL)</h3>
                 <ul id="credit-list" class="list-group"></ul>
             </div>
         </div>
 
-        <!-- 3. MAAŞ EKRANI -->
+        <!-- 3. MAAŞ VE EK GELİR EKRANI -->
         <div id="screen-salary" class="screen hidden">
             <div class="header-action">
-                <p class="info-text">Tahmini ve yatan maaşları yönet.</p>
+                <p class="info-text neon-text-white">Tahmini maaş, gerçek yatan ve ek gelirler.</p>
                 <button class="btn-toggle" onclick="toggleVisibility('salary')">👁️ Gizle/Göster</button>
             </div>
             <div class="card">
@@ -124,33 +119,16 @@
             </div>
         </div>
 
-        <!-- 4. BANKA / KASA EKRANI -->
-        <div id="screen-status" class="screen hidden">
+        <!-- 4. TAKVİM VE ZAMAN ÇİZELGESİ EKRANI -->
+        <div id="screen-calendar" class="screen hidden">
             <div class="header-action">
-                <p class="info-text">Hesap ve nakit durumları (Loglu)</p>
-                <button class="btn-toggle" id="btn-status-toggle" onclick="toggleVisibility('status')">👁️ Rakamları Göster</button>
-            </div>
-            <div class="card form-card">
-                <input type="text" id="acc-name" class="input-field" placeholder="Hesap/Banka Adı">
-                <input type="number" id="acc-balance" class="input-field" placeholder="Bakiye (TL)" inputmode="decimal">
-                <button class="btn-primary" onclick="addAccount()">Hesap Güncelle</button>
+                <select id="cal-month-select" class="input-field neon-border" onchange="renderCalendar()"></select>
             </div>
             <div class="card">
-                <h3 class="card-title">Toplam Varlık: <span class="blur-status blur-active" id="total-status-balance">0 TL</span></h3>
-                <ul id="account-list" class="list-group"></ul>
-            </div>
-        </div>
-
-        <!-- 5. YATIRIM EKRANI -->
-        <div id="screen-investment" class="screen hidden">
-             <div class="card form-card">
-                <input type="text" id="inv-name" class="input-field" placeholder="Yatırım Cinsi (Örn: Gram Altın)">
-                <input type="number" id="inv-amount" class="input-field" placeholder="Miktar / Adet" inputmode="decimal">
-                <input type="number" id="inv-value" class="input-field" placeholder="Toplam Değer (TL)" inputmode="decimal">
-                <button class="btn-primary" onclick="addInvestment()">Yatırım Ekle / Güncelle</button>
-            </div>
-            <div class="card">
-                <ul id="investment-list" class="list-group"></ul>
+                <h3 class="card-title neon-text-cyan">Zaman Çizelgesi</h3>
+                <div id="timeline-container" class="timeline">
+                    <!-- Javascript ile tarihe göre dizilecek -->
+                </div>
             </div>
         </div>
 
