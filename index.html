@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <!-- iOS Native App Etiketleri (Safari Çubuğunu Gizler) -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Ajandam">
@@ -14,36 +13,54 @@
 </head>
 <body>
 
-    <!-- ÜST BAR -->
+    <!-- ÜST BAR (iOS Çentik Uyumu & ERDEM YAVUZ İmzası Eklendi) -->
     <header class="app-header">
-        <button id="back-btn" class="hidden" onclick="goHome()">◀ Ana Menü</button>
-        <h2 id="page-title">Finans Ajandam</h2>
+        <button id="back-btn" class="hidden" onclick="goHome()">◀ Menü</button>
+        <div class="header-center">
+            <h2 id="page-title">Finans Ajandam</h2>
+            <div class="owner-badge">ERDEM YAVUZ</div>
+        </div>
     </header>
 
     <main class="app-content">
 
-        <!-- ANA MENÜ EKRANI -->
+        <!-- ANA MENÜ VE GENEL DURUM EKRANI -->
         <div id="screen-home" class="screen">
+            
+            <!-- ANA EKRAN: GENEL DURUM (NET HESAP) -->
+            <div class="card dashboard-card">
+                <div class="dash-header">
+                    <h3>Aylık Durumum</h3>
+                    <select id="dash-month-select" class="input-field minimal-select" onchange="renderDashboard()"></select>
+                </div>
+                <div class="dash-row"><span>Maaş (Yatan/Tahmini):</span> <strong id="dash-salary">0 TL</strong></div>
+                <div class="dash-row"><span>Sabit Giderler:</span> <strong id="dash-fixed" class="text-danger">0 TL</strong></div>
+                <div class="dash-row"><span>Kredi Ödemesi:</span> <strong id="dash-credit" class="text-danger">0 TL</strong></div>
+                <div class="dash-row"><span>Aylık Harcamalar:</span> <strong id="dash-expense" class="text-danger">0 TL</strong></div>
+                <hr class="dash-divider">
+                <div class="dash-row total"><span>Kalan Net:</span> <strong id="dash-net">0 TL</strong></div>
+            </div>
+
             <div class="menu-grid">
                 <button class="menu-card" onclick="openScreen('screen-expense', 'Harcama Ekle')">
                     <span class="icon">💸</span>
                     <h3>Harcama Ekle</h3>
-                    <p>Günlük Giderler</p>
+                </button>
+                <button class="menu-card" onclick="openScreen('screen-payments', 'Sabit & Kredi')">
+                    <span class="icon">🗓️</span>
+                    <h3>Sabit & Kredi</h3>
                 </button>
                 <button class="menu-card" onclick="openScreen('screen-salary', 'Maaş Yönetimi')">
                     <span class="icon">💰</span>
                     <h3>Maaş</h3>
-                    <p>Tahmini & Gerçek</p>
                 </button>
-                <button class="menu-card" onclick="openScreen('screen-status', 'Genel Durum')">
+                <button class="menu-card" onclick="openScreen('screen-status', 'Banka / Kasa')">
                     <span class="icon">🏦</span>
-                    <h3>Genel Durum</h3>
-                    <p>Hesaplar & Banka</p>
+                    <h3>Banka / Kasa</h3>
                 </button>
-                <button class="menu-card" onclick="openScreen('screen-investment', 'Yatırım & Birikim')">
+                <button class="menu-card" onclick="openScreen('screen-investment', 'Yatırım Planı')">
                     <span class="icon">📈</span>
-                    <h3>Yatırım - Birikim</h3>
-                    <p>Altın, Fon, Döviz</p>
+                    <h3>Yatırım</h3>
                 </button>
             </div>
         </div>
@@ -51,7 +68,7 @@
         <!-- 1. HARCAMA EKLE EKRANI -->
         <div id="screen-expense" class="screen hidden">
             <div class="card form-card">
-                <select id="exp-month-select" class="input-field"></select>
+                <select id="exp-month-select" class="input-field" onchange="renderExpenses()"></select>
                 <input type="number" id="exp-amount" class="input-field" placeholder="Tutar (TL)" inputmode="decimal">
                 <select id="exp-category" class="input-field">
                     <option value="Yemek/Market">Yemek / Market</option>
@@ -64,34 +81,49 @@
                 <button class="btn-primary" onclick="addExpense()">Harcama Ekle</button>
             </div>
             <div class="card">
-                <h3 class="card-title">Seçili Ayın Harcamaları (<span id="monthly-total-expense">0</span> TL)</h3>
+                <h3 class="card-title">Harcamalar (<span id="monthly-total-expense">0</span> TL)</h3>
                 <ul id="expense-list" class="list-group"></ul>
             </div>
         </div>
 
-        <!-- 2. MAAŞ EKRANI -->
-        <div id="screen-salary" class="screen hidden">
+        <!-- 2. SABİT GİDERLER VE KREDİ (YENİ EKRAN) -->
+        <div id="screen-payments" class="screen hidden">
             <div class="header-action">
-                <p class="info-text">Tahmini ve yatan maaşları buradan yönet.</p>
-                <button class="btn-toggle" onclick="toggleVisibility('salary')">👁️ Rakamları Gizle/Göster</button>
+                <select id="pay-month-select" class="input-field" onchange="renderPayments()"></select>
             </div>
+            
             <div class="card">
-                <ul id="salary-list" class="list-group">
-                    <!-- Javascript ile aylar buraya eklenecek -->
-                </ul>
+                <h3 class="card-title">Sabit Giderler (<span id="total-fixed-val">0</span> TL)</h3>
+                <ul id="fixed-list" class="list-group"></ul>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">Kredi Ödemesi (<span id="total-credit-val">0</span> TL)</h3>
+                <ul id="credit-list" class="list-group"></ul>
             </div>
         </div>
 
-        <!-- 3. GENEL DURUM EKRANI -->
+        <!-- 3. MAAŞ EKRANI -->
+        <div id="screen-salary" class="screen hidden">
+            <div class="header-action">
+                <p class="info-text">Tahmini ve yatan maaşları yönet.</p>
+                <button class="btn-toggle" onclick="toggleVisibility('salary')">👁️ Gizle/Göster</button>
+            </div>
+            <div class="card">
+                <ul id="salary-list" class="list-group"></ul>
+            </div>
+        </div>
+
+        <!-- 4. BANKA / KASA EKRANI -->
         <div id="screen-status" class="screen hidden">
             <div class="header-action">
-                <p class="info-text">Banka, nakit ve genel hesap durumların.</p>
+                <p class="info-text">Hesap ve nakit durumları (Loglu)</p>
                 <button class="btn-toggle" id="btn-status-toggle" onclick="toggleVisibility('status')">👁️ Rakamları Göster</button>
             </div>
             <div class="card form-card">
-                <input type="text" id="acc-name" class="input-field" placeholder="Hesap/Banka Adı (Örn: Ziraat, Nakit)">
+                <input type="text" id="acc-name" class="input-field" placeholder="Hesap/Banka Adı">
                 <input type="number" id="acc-balance" class="input-field" placeholder="Bakiye (TL)" inputmode="decimal">
-                <button class="btn-primary" onclick="addAccount()">Hesap Ekle / Güncelle</button>
+                <button class="btn-primary" onclick="addAccount()">Hesap Güncelle</button>
             </div>
             <div class="card">
                 <h3 class="card-title">Toplam Varlık: <span class="blur-status blur-active" id="total-status-balance">0 TL</span></h3>
@@ -99,7 +131,7 @@
             </div>
         </div>
 
-        <!-- 4. YATIRIM VE BİRİKİM EKRANI -->
+        <!-- 5. YATIRIM VE BİRİKİM EKRANI -->
         <div id="screen-investment" class="screen hidden">
              <div class="card form-card">
                 <input type="text" id="inv-name" class="input-field" placeholder="Yatırım Cinsi (Örn: Gram Altın)">
