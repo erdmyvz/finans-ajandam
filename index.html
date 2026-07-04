@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Finans Ajandam</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Ajandam">
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+</head>
+<body>
+
+    <header class="app-header">
+        <div class="income-view">
+            <span>Aylık Gelir:</span>
+            <input type="number" id="monthly-income" onchange="updateIncome(this.value)" title="Değiştirmek için dokunun">
+            <span class="currency">TL</span>
+        </div>
+        <div class="daily-allowance">
+            <p>Bugün Harcayabileceğin</p>
+            <h1 id="calc-daily-limit">0 TL</h1>
+            <small>Ayın bitimine <span id="calc-days-left">0</span> gün kaldı</small>
+        </div>
+    </header>
+
+    <main class="app-content">
+        
+        <section id="tab-harcama" class="tab-section">
+            <div class="card">
+                <h3>Hızlı Harcama Ekle</h3>
+                <div class="input-group">
+                    <input type="number" id="exp-amount" placeholder="Tutar (TL)" inputmode="decimal">
+                    <select id="exp-category">
+                        <option value="Yemek/Market">Yemek / Market</option>
+                        <option value="Ulaşım (Ekstra)">Ulaşım (Ekstra)</option>
+                        <option value="Keyfi">Keyfi Harcama</option>
+                        <option value="Diğer">Diğer Gider</option>
+                    </select>
+                    <button onclick="submitExpense()">Ekle</button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>Bu Ayın Günlük Harcamaları (<span id="total-daily-spent">0</span> TL)</h3>
+                <ul id="daily-log-list" class="log-list"></ul>
+            </div>
+        </section>
+
+        <section id="tab-odemeler" class="tab-section hidden">
+            <div class="card">
+                <h3>Kredi Taksit Takibi (12 Taksit x 28.895 TL)</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <th>Taksit</th>
+                            <th>Tarih</th>
+                            <th>Tutar</th>
+                            <th>Durum</th>
+                        </thead>
+                        <tbody id="loans-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Aylık Düzenli Giderler (10.000 TL Şablonu)</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <th>Gider Adı</th>
+                            <th>Detay / Gün</th>
+                            <th>Tutar</th>
+                            <th>Durum</th>
+                        </thead>
+                        <tbody id="fixed-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-varliklar" class="tab-section hidden">
+            <div class="card status-card">
+                <h3>Maddi Durum Bilançosu</h3>
+                <div class="status-row"><span>Eren (Altın/Nakit Hesap):</span> <strong>275.712 TL</strong></div>
+                <div class="status-row"><span>Cepteki Nakit Değeri:</span> <strong>93.240 TL</strong></div>
+                <div class="status-row"><span>Banka Bakiyesi:</span> <strong>10.000 TL</strong></div>
+                <div class="status-row highlight"><span>Gelecek Toplam Para:</span> <strong>904.840 TL</strong></div>
+                <div class="status-row alert"><span>Geri Ödemeler Toplamı:</span> <strong>609.983 TL</strong></div>
+            </div>
+
+            <div class="card milestone-card">
+                <h3>Kritik Kilometre Taşları (2026)</h3>
+                <div class="timeline-item orange">
+                    <span class="date">20.07.2026</span>
+                    <span class="text">Araç Teslim Zamanı 🚗</span>
+                </div>
+                <div class="timeline-item red">
+                    <span class="date">04.10.2026</span>
+                    <span class="text">İşten Ayrılış / Kıdem Süreci (4 Yıl)</span>
+                </div>
+                <div class="timeline-item green">
+                    <span class="date">Tahmini</span>
+                    <span class="text">Kıdem Tazminatı Girişi (+336.000 TL)</span>
+                </div>
+                <div class="timeline-item gray">
+                    <span class="date">04.11.2026</span>
+                    <span class="text">Askerlik Nedeniyle İstifa ve Sevk Dönemi</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <nav class="app-navigation">
+        <button class="nav-btn active" onclick="switchTab('tab-harcama', this)">
+            <span class="icon">💸</span><span class="label">Harcamalar</span>
+        </button>
+        <button class="nav-btn" onclick="switchTab('tab-odemeler', this)">
+            <span class="icon">🗓️</span><span class="label">Ödemeler</span>
+        </button>
+        <button class="nav-btn" onclick="switchTab('tab-varliklar', this)">
+            <span class="icon">📊</span><span class="label">Genel Durum</span>
+        </button>
+    </nav>
+
+    <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
+</body>
+</html>
