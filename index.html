@@ -13,7 +13,6 @@
 </head>
 <body>
 
-    <!-- ÜST BAR (iOS Çentik Uyumu & ERDEM YAVUZ İmzası Eklendi) -->
     <header class="app-header">
         <button id="back-btn" class="hidden" onclick="goHome()">◀ Menü</button>
         <div class="header-center">
@@ -27,40 +26,45 @@
         <!-- ANA MENÜ VE GENEL DURUM EKRANI -->
         <div id="screen-home" class="screen">
             
-            <!-- ANA EKRAN: GENEL DURUM (NET HESAP) -->
             <div class="card dashboard-card">
                 <div class="dash-header">
                     <h3>Aylık Durumum</h3>
                     <select id="dash-month-select" class="input-field minimal-select" onchange="renderDashboard()"></select>
                 </div>
-                <div class="dash-row"><span>Maaş (Yatan/Tahmini):</span> <strong id="dash-salary">0 TL</strong></div>
-                <div class="dash-row"><span>Sabit Giderler:</span> <strong id="dash-fixed" class="text-danger">0 TL</strong></div>
-                <div class="dash-row"><span>Kredi Ödemesi:</span> <strong id="dash-credit" class="text-danger">0 TL</strong></div>
-                <div class="dash-row"><span>Aylık Harcamalar:</span> <strong id="dash-expense" class="text-danger">0 TL</strong></div>
-                <hr class="dash-divider">
-                <div class="dash-row total"><span>Kalan Net:</span> <strong id="dash-net">0 TL</strong></div>
+                
+                <!-- Sadeleştirilmiş Ana Ekran -->
+                <div class="dash-row total net-highlight">
+                    <span>Kalan Net:</span> <strong id="dash-net">0 TL</strong>
+                </div>
+                
+                <!-- Detay Butonu -->
+                <button class="btn-text-toggle" onclick="toggleDashDetails()">Detayları Göster / Gizle ▼</button>
+                
+                <!-- Gizli Detaylar -->
+                <div id="dash-details" class="hidden">
+                    <hr class="dash-divider">
+                    <div class="dash-row"><span>Maaş:</span> <strong id="dash-salary">0 TL</strong></div>
+                    <div class="dash-row"><span>Sabit Giderler:</span> <strong id="dash-fixed" class="text-danger">0 TL</strong></div>
+                    <div class="dash-row"><span>Kredi Ödemesi:</span> <strong id="dash-credit" class="text-danger">0 TL</strong></div>
+                    <div class="dash-row"><span>Aylık Harcamalar:</span> <strong id="dash-expense" class="text-danger">0 TL</strong></div>
+                </div>
             </div>
 
             <div class="menu-grid">
                 <button class="menu-card" onclick="openScreen('screen-expense', 'Harcama Ekle')">
-                    <span class="icon">💸</span>
-                    <h3>Harcama Ekle</h3>
+                    <span class="icon">💸</span><h3>Harcama Ekle</h3>
                 </button>
                 <button class="menu-card" onclick="openScreen('screen-payments', 'Sabit & Kredi')">
-                    <span class="icon">🗓️</span>
-                    <h3>Sabit & Kredi</h3>
+                    <span class="icon">🗓️</span><h3>Sabit & Kredi</h3>
                 </button>
                 <button class="menu-card" onclick="openScreen('screen-salary', 'Maaş Yönetimi')">
-                    <span class="icon">💰</span>
-                    <h3>Maaş</h3>
+                    <span class="icon">💰</span><h3>Maaş</h3>
                 </button>
                 <button class="menu-card" onclick="openScreen('screen-status', 'Banka / Kasa')">
-                    <span class="icon">🏦</span>
-                    <h3>Banka / Kasa</h3>
+                    <span class="icon">🏦</span><h3>Banka / Kasa</h3>
                 </button>
                 <button class="menu-card" onclick="openScreen('screen-investment', 'Yatırım Planı')">
-                    <span class="icon">📈</span>
-                    <h3>Yatırım</h3>
+                    <span class="icon">📈</span><h3>Yatırım</h3>
                 </button>
             </div>
         </div>
@@ -86,7 +90,7 @@
             </div>
         </div>
 
-        <!-- 2. SABİT GİDERLER VE KREDİ (YENİ EKRAN) -->
+        <!-- 2. SABİT GİDERLER VE KREDİ (Düzenlenebilir) -->
         <div id="screen-payments" class="screen hidden">
             <div class="header-action">
                 <select id="pay-month-select" class="input-field" onchange="renderPayments()"></select>
@@ -95,6 +99,12 @@
             <div class="card">
                 <h3 class="card-title">Sabit Giderler (<span id="total-fixed-val">0</span> TL)</h3>
                 <ul id="fixed-list" class="list-group"></ul>
+                <!-- Yeni Sabit Gider Ekleme Formu -->
+                <div class="mini-form mt-15">
+                    <input type="text" id="new-fixed-name" class="input-field mini-input" placeholder="Yeni Gider Adı">
+                    <input type="number" id="new-fixed-amount" class="input-field mini-input" placeholder="Tutar" inputmode="decimal">
+                    <button class="btn-secondary" onclick="addFixedPayment()">Ekle</button>
+                </div>
             </div>
 
             <div class="card">
@@ -131,7 +141,7 @@
             </div>
         </div>
 
-        <!-- 5. YATIRIM VE BİRİKİM EKRANI -->
+        <!-- 5. YATIRIM EKRANI -->
         <div id="screen-investment" class="screen hidden">
              <div class="card form-card">
                 <input type="text" id="inv-name" class="input-field" placeholder="Yatırım Cinsi (Örn: Gram Altın)">
@@ -145,12 +155,7 @@
         </div>
 
     </main>
-
     <script src="app.js"></script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js');
-        }
-    </script>
+    <script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');</script>
 </body>
 </html>

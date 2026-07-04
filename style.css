@@ -1,30 +1,13 @@
 :root {
-    --bg-color: #f2f2f7;
-    --card-bg: #ffffff;
-    --primary: #007aff;
-    --text-main: #1c1c1e;
-    --text-muted: #8e8e93;
-    --success: #34c759;
-    --warning: #ff9500;
-    --danger: #ff3b30;
-    --border: #e5e5ea;
+    --bg-color: #f2f2f7; --card-bg: #ffffff; --primary: #007aff;
+    --text-main: #1c1c1e; --text-muted: #8e8e93; --success: #34c759;
+    --warning: #ff9500; --danger: #ff3b30; --border: #e5e5ea;
 }
-
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
 body { background-color: var(--bg-color); color: var(--text-main); -webkit-tap-highlight-color: transparent; }
 
-/* Üst Header - iOS Çentik Uyumlu (Daha Aşağıda) */
-.app-header { 
-    background: #000; 
-    color: #fff; 
-    padding: max(60px, env(safe-area-inset-top) + 20px) 20px 15px 20px; 
-    display: flex; 
-    align-items: center; 
-    position: sticky; 
-    top: 0; 
-    z-index: 100; 
-}
+/* Üst Header */
+.app-header { background: #000; color: #fff; padding: max(60px, env(safe-area-inset-top) + 20px) 20px 15px 20px; display: flex; align-items: center; position: sticky; top: 0; z-index: 100; }
 #back-btn { background: none; border: none; color: var(--primary); font-size: 16px; font-weight: 500; cursor: pointer; position: absolute; left: 15px; }
 .header-center { flex-grow: 1; text-align: center; }
 #page-title { font-size: 18px; font-weight: 600; margin-bottom: 2px; }
@@ -32,60 +15,61 @@ body { background-color: var(--bg-color); color: var(--text-main); -webkit-tap-h
 
 .app-content { padding: 20px; max-width: 500px; margin: 0 auto; padding-bottom: 50px; }
 .hidden { display: none !important; }
+.mt-15 { margin-top: 15px; }
 
-/* Ana Ekran Dashboard (Genel Durum) */
+/* Dashboard ve Butonlar */
 .dashboard-card { border: 2px solid var(--primary); background: #f8fbff; }
-.dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+.dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .dash-header h3 { font-size: 18px; margin: 0; color: var(--primary); }
 .minimal-select { width: auto; padding: 6px 12px; font-size: 14px; font-weight: bold; color: var(--primary); border: 1px solid var(--primary); }
 .dash-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 15px; }
 .dash-divider { border: 0; border-top: 1px solid #cce0ff; margin: 10px 0; }
-.dash-row.total { font-size: 18px; font-weight: bold; }
+.net-highlight { font-size: 20px; font-weight: bold; margin-bottom: 10px; }
 .text-danger { color: var(--danger) !important; }
 .text-success { color: var(--success) !important; }
+.btn-text-toggle { background: #e6f0ff; color: var(--primary); border: none; width: 100%; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 5px; }
 
-/* Ana Menü Grid */
+/* Grid ve Formlar */
 .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
 .menu-card { background: var(--card-bg); border: none; border-radius: 16px; padding: 20px 10px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.04); cursor: pointer; }
 .menu-card .icon { font-size: 34px; display: block; margin-bottom: 8px; }
-.menu-card h3 { font-size: 14px; color: var(--text-main); }
-
-/* Ortak Kart Yapısı */
 .card { background: var(--card-bg); border-radius: 14px; padding: 18px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
 .card-title { font-size: 16px; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
 
-/* Formlar */
 .form-card { display: flex; flex-direction: column; gap: 12px; }
 .input-field { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 10px; font-size: 16px; background: #fafafa; -webkit-appearance: none; }
 .btn-primary { background: var(--primary); color: #fff; border: none; padding: 15px; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; width: 100%; }
+.btn-secondary { background: var(--success); color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; }
+.mini-form { display: flex; gap: 8px; }
+.mini-input { padding: 10px; font-size: 14px; }
 
 .header-action { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
 .info-text { font-size: 13px; color: var(--text-muted); }
 .btn-toggle { background: #e5e5ea; border: none; padding: 8px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; }
 
-/* Listeler ve Log Tarihleri */
+/* Listeler */
 .list-group { list-style: none; }
 .list-group li { padding: 12px 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-.list-group li:last-child { border-bottom: none; }
 .item-left strong { display: block; font-size: 15px; margin-bottom: 3px; }
 .item-log { color: var(--text-muted); font-size: 11px; display: block; }
 .item-right { text-align: right; }
 .item-amount { font-weight: bold; font-size: 15px; }
 
-/* Ödendi/Ödenmedi Butonu */
+/* Ödeme ve Silme İşlemleri */
+.payment-actions { display: flex; gap: 8px; align-items: center; }
+.btn-delete { background: none; border: none; color: var(--danger); font-weight: bold; font-size: 16px; cursor: pointer; padding: 0 5px; }
 .status-badge { padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; border: none; }
 .status-badge.paid { background: #e3fbe3; color: var(--success); }
 .status-badge.unpaid { background: #ffebeb; color: var(--danger); }
-
-/* GİZLEME (BLUR) EFEKTLERİ */
 .blur-active { filter: blur(6px); opacity: 0.7; user-select: none; transition: filter 0.3s ease; }
 .blur-active:active { filter: blur(0); opacity: 1; }
 
-/* Maaş Özel Listesi */
-.salary-item { flex-direction: column; align-items: stretch !important; gap: 10px; }
-.salary-header { display: flex; justify-content: space-between; font-weight: bold; font-size: 15px; }
-.salary-inputs { display: flex; gap: 10px; }
-.salary-inputs input { flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; }
+/* Maaş Ekranı (Taşmayı Önleyen Alt Alta Tasarım) */
+.salary-item { display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid var(--border); padding: 15px 0; }
+.salary-header { display: flex; justify-content: space-between; font-weight: bold; font-size: 16px; }
+.salary-inputs { display: flex; flex-direction: column; gap: 8px; }
+.salary-input-group { display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+.salary-input-group input { width: 55%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; text-align: right; font-size: 15px; }
 .badge { font-size: 11px; padding: 4px 8px; border-radius: 6px; color: white; }
 .badge.tahmini { background: var(--warning); }
 .badge.gercek { background: var(--success); }
